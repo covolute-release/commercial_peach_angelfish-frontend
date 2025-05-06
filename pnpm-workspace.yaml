@@ -1,0 +1,10 @@
+storeDir: /app/.pnpm-store
+hoist: true
+packages:
+  - ./
+overrides:
+  'react': '19.1.0'
+  'react-dom': '19.1.0'
+  'vite': 'npm:rolldown-vite@latest'
+  '@remix-run/node': 'npm:react-router@7.5.3'
+  '@remix-run/react': 'npm:react-router@7.5.3'

@@ -1,0 +1,183 @@
+import { Text } from "@/components/text";
+import { Badge } from "@/components/badge";
+import { Input } from "@/components/input";
+import { Label } from "@/components/label";
+import { Heading } from "@/components/heading";
+import type { FC } from "react";
+import { useState } from "react";
+
+import { convertToLocale } from "@/lib/util/money";
+import type { HttpTypes } from "@medusajs/types";
+import Trash from "@/modules/common/icons/trash";
+import ErrorMessage from "./error-message";
+import { SubmitButton } from "./submit-button";
+import { useFetcher, useSearchParams } from "@remix-run/node";
+import { Tooltip } from "@/components/tooltip";
+import { InformationCircleSolid } from "@medusajs/icons";
+import { TooltipProvider } from "@radix-ui/react-tooltip";
+
+type DiscountCodeProps = {
+  cart: HttpTypes.StoreCart & {
+    promotions: HttpTypes.StorePromotion[];
+  };
+};
+
+const DiscountCode: FC<DiscountCodeProps> = ({ cart }) => {
+  const fetcher = useFetcher();
+  const [, setSearchParams] = useSearchParams();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const { promotions = [] } = cart;
+  const removePromotionCode = async (code: string) => {
+    const validPromotions = promotions.filter((promotion) => promotion.code !== code);
+    const formData = new FormData();
+    const codes = validPromotions.filter((p) => typeof p.code === "string").map((p) => p.code!);
+    for (const code of codes) {
+      formData.append("codes", code);
+    }
+    await fetcher.submit(formData, {
+      method: "post",
+      action: "/apply/promotions",
+    });
+
+    setSearchParams((prev) => {
+      if (prev.has("step")) {
+        prev.set("step", "payment");
+      }
+      return prev;
+    });
+  };
+
+  const addPromotionCode = async (formData: FormData) => {
+    const code = formData.get("code");
+    if (!code) {
+      return;
+    }
+    const input = document.getElementById("promotion-input") as HTMLInputElement;
+    const codes = promotions.filter((p) => typeof p.code === "string").map((p) => p.code!);
+
+    codes.push(code.toString());
+    const sendFormData = new FormData();
+    for (const code of codes) {
+      sendFormData.append("codes", code);
+    }
+    await fetcher.submit(sendFormData, {
+      method: "post",
+      action: "/apply/promotions",
+    });
+    setSearchParams((prev) => {
+      if (prev.has("step")) {
+        prev.set("step", "payment");
+      }
+      return prev;
+    });
+
+    if (input) {
+      input.value = "";
+    }
+  };
+
+  return (
+    <div className="w-full bg-white flex flex-col">
+      <div className="txt-medium">
+        <form action={(a) => addPromotionCode(a)} className="w-full mb-5">
+          <Label className="flex gap-x-1 my-2 items-center">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              type="button"
+              className="txt-medium text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
+              data-testid="add-discount-button"
+            >
+              Add Promotion Code(s)
+            </button>
+
+            <TooltipProvider delayDuration={0}>
+              <Tooltip content="You can add multiple promotion codes">
+                <InformationCircleSolid color="var(--fg-muted)" />
+              </Tooltip>
+            </TooltipProvider>
+          </Label>
+
+          {isOpen && (
+            <>
+              <div className="flex w-full gap-x-2">
+                <Input
+                  className="size-full"
+                  id="promotion-input"
+                  name="code"
+                  type="text"
+                  autoFocus
+                  data-testid="discount-input"
+                />
+                <SubmitButton variant="secondary" data-testid="discount-apply-button">
+                  Apply
+                </SubmitButton>
+              </div>
+
+              <ErrorMessage error={fetcher.data} data-testid="discount-error-message" />
+            </>
+          )}
+        </form>
+
+        {promotions.length > 0 && (
+          <div className="w-full flex items-center">
+            <div className="flex flex-col w-full">
+              <Heading className="txt-medium mb-2">Promotion(s) applied:</Heading>
+
+              {promotions.map((promotion) => {
+                return (
+                  <div
+                    key={promotion.id}
+                    className="flex items-center justify-between w-full max-w-full mb-2"
+                    data-testid="discount-row"
+                  >
+                    <Text className="flex gap-x-1 items-baseline txt-small-plus w-4/5 pr-1">
+                      <span className="truncate" data-testid="discount-code">
+                        <Badge color={promotion.is_automatic ? "green" : "grey"} size="small">
+                          {promotion.code}
+                        </Badge>{" "}
+                        (
+                        {promotion.application_method?.value !== undefined &&
+                          promotion.application_method.currency_code !== undefined &&
+                          (promotion.application_method.type === "percentage"
+                            ? `${promotion.application_method.value}%`
+                            : convertToLocale({
+                                amount: promotion.application_method.value,
+                                currency_code: promotion.application_method.currency_code,
+                              }))}
+                        )
+                        {/* {promotion.is_automatic && (
+                          <Tooltip content="This promotion is automatically applied">
+                            <InformationCircleSolid className="inline text-zinc-400" />
+                          </Tooltip>
+                        )} */}
+                      </span>
+                    </Text>
+                    {!promotion.is_automatic && (
+                      <button
+                        className="flex items-center"
+                        onClick={() => {
+                          if (!promotion.code) {
+                            return;
+                          }
+
+                          removePromotionCode(promotion.code);
+                        }}
+                        data-testid="remove-discount-button"
+                      >
+                        <Trash size={14} />
+                        <span className="sr-only">Remove discount code from order</span>
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default DiscountCode;
