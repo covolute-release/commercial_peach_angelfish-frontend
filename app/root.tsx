@@ -13,12 +13,12 @@ import { reportClientError } from "./lib/error-process-client";
 export const links: Route.LinksFunction = () => [
   { rel: "stylesheet", href: globalStylesheet },
   { rel: "stylesheet", href: readonlyStylesheet },
-  { rel: "icon", href: "/favicon.ico" },
+  { rel: "icon", href: "/favicon.ico" }, // Consider updating favicon later
 ];
 
 export const meta: Route.MetaDescriptors = [
   {
-    title: "Shopable Starter",
+    title: "Petopia - Your Friendly Pet Store",
   },
 ];
 

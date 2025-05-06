@@ -111,8 +111,8 @@ const SideMenu = ({ regions }: { regions: HttpTypes.StoreRegion[] | null }) => {
                             className={cn("transition-transform duration-150", toggleState.state ? "-rotate-90" : "")}
                           />
                         </div>
-                        <Text className="flex justify-between txt-compact-small">
-                          © {new Date().getFullYear()} Shopable Store. All rights reserved.
+                        <Text className="flex justify-between txt-compact-small text-ui-fg-muted">
+                          © {new Date().getFullYear()} Petopia. All rights reserved.
                         </Text>
                       </div>
                     </div>

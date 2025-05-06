@@ -7,22 +7,18 @@ const Hero = () => {
       <div className="absolute inset-0 z-10 flex flex-col justify-center items-center text-center small:p-32 gap-6">
         <span>
           <Heading level="h1" className="text-3xl leading-10 text-ui-fg-base font-normal">
-            Ecommerce Starter Template
+            Petopia Emporium
           </Heading>
           <Heading level="h2" className="text-3xl leading-10 text-ui-fg-subtle font-normal">
-            Template by Shopable
+            Your One-Stop Shop for Pet Joy!
           </Heading>
         </span>
-        <a
-          href="https://shopable.dev/"
-          target="_blank"
-          rel="noopener noreferrer" // Added rel for security best practices
-        >
-          <Button variant="secondary">
-            Learn More about Shopable
-            <span className="ml-2">🛍️</span> {/* Replaced sparkle emoji with shopping bag emoji */}
+        <LocalizedClientLink href="/store">
+          <Button variant="primary"> {/* Ensure this uses the new primary color (purple) */}
+            Explore Pet Goodies
+            <span className="ml-2">🐾</span>
           </Button>
-        </a>
+        </LocalizedClientLink>
       </div>
     </div>
   );

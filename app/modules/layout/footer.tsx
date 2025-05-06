@@ -8,9 +8,10 @@ import type { loader } from "@/routes/_main";
 
 export default function Footer() {
   const { collections, categories: productCategories } = useLoaderData<typeof loader>();
+  const logoUrl = "https://firebasestorage.googleapis.com/v0/b/shopable-60057.firebasestorage.app/o/stores%2Fac031f19-5e6d-4657-9b71-4eaa2ba74658%2Fimages%2Fgenerated-072dd057-52ad-4580-a87a-1c5f9d19b659.png?alt=media";
 
   return (
-    <footer className="border-t border-ui-border-base w-full">
+    <footer className="border-t border-ui-border-base w-full bg-ui-bg-subtle">
       <div className="content-container flex flex-col w-full">
         <div className="flex flex-col gap-y-6 xsmall:flex-row items-start justify-between py-40">
           <div>
@@ -18,7 +19,7 @@ export default function Footer() {
               href="/"
               className="txt-compact-xlarge-plus text-ui-fg-subtle hover:text-ui-fg-base uppercase"
             >
-              Shopable Store
+              <img src={logoUrl} alt="Pet Store Logo" className="h-12 object-contain" />
             </LocalizedClientLink>
             <Text className="txt-compact-small text-ui-fg-subtle mt-2">Template by Shopable</Text>
           </div>
@@ -93,7 +94,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="flex w-full mb-16 justify-between text-ui-fg-muted">
-          <Text className="txt-compact-small">© {new Date().getFullYear()} Shopable Store. All rights reserved.</Text>
+          <Text className="txt-compact-small">© {new Date().getFullYear()} Petopia. All rights reserved.</Text>
           {/* MedusaCTA removed */}
         </div>
       </div>

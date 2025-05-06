@@ -9,8 +9,8 @@ import { listProducts } from "@/lib/data/products.server";
 
 export const meta: Route.MetaDescriptors = [
   {
-    title: "Ecommerce Starter Template by Shopable",
-    description: "A performant frontend ecommerce starter template built with Shopable.",
+    title: "Petopia - Awesome Goods for Your Awesome Pets!",
+    description: "Discover a wide range of pet supplies, toys, food, and accessories at Petopia. Everything your furry, scaly, or feathery friend needs!",
   },
 ];
 
